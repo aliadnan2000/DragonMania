@@ -3,11 +3,10 @@
 #include <vector>
 using namespace std;
 
-Unit dragon = { {442, 19, 151, 118}, {30, 40, 50, 50} };
-vector<Unit> dragonVector;
+std::vector<Unit> dragonVector; // Define the vector
 
 void createObject(int x, int y) {
-    Unit newDragon = { {442, 19, 151, 118}, {x, y, 80, 80} };
+    Unit newDragon = { {442, 19, 151, 118}, {x, y, 75, 75} };
     dragonVector.push_back(newDragon);
 }
 

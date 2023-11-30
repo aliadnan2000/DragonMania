@@ -19,7 +19,7 @@ int main(int argc, char* args[])
         return 1;
     }
 
-    RenderWindow window("GAME v1.0", 1280, 720);
+    RenderWindow window("Dragoon v1.0", 1280, 720);
 
     // Load background image
      SDL_Surface* backgroundImage = IMG_Load("bg.png");
@@ -58,6 +58,7 @@ int main(int argc, char* args[])
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
 
+
     bool gameRunning = true;
     SDL_Event event;
 
@@ -68,6 +69,35 @@ int main(int argc, char* args[])
         {
             if (event.type == SDL_QUIT)
                 gameRunning = false;
+
+            // Handle key presses for movement
+            if (event.type == SDL_KEYDOWN)
+            {
+                switch (event.key.keysym.sym)
+                {
+                    case SDLK_w:
+                        for (auto& unit : dragonVector)
+                            unit.moverRect.y -= 15;  // Adjust movement speed
+                        break;
+
+                    case SDLK_s:
+                        for (auto& unit : dragonVector)
+                            unit.moverRect.y += 15;  
+                        break;
+                    // Commented out for now, just need up and down movement
+                    /* case SDLK_a:
+                        for (auto& unit : dragonVector)
+                            unit.moverRect.x -= 10;  
+                        break;
+
+                    case SDLK_d:
+                        for (auto& unit : dragonVector)
+                            unit.moverRect.x += 10;  
+                        break; */
+
+                    // will add more cases for other keys later such as spacebar for shooting the fireball
+                }
+            }
         }
 
         // Clear the renderer
