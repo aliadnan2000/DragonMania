@@ -3,6 +3,7 @@
 #include <iostream>
 #include "RenderWindow.hpp"
 #include "Dragon.hpp"
+#include "Fireball.hpp"
 
 int main(int argc, char* args[])
 {
@@ -55,69 +56,94 @@ int main(int argc, char* args[])
     SDL_Texture* dragonTexture = SDL_CreateTextureFromSurface(window.getRenderer(), dragonSurface);
     SDL_FreeSurface(dragonSurface);
 
+    // Load fireball image
+    SDL_Surface* fireballSurface = IMG_Load("assets.png");
+    if (!fireballSurface)
+    {
+        std::cout << "Failed to load fireball image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* fireballTexture = SDL_CreateTextureFromSurface(window.getRenderer(), fireballSurface);
+    SDL_FreeSurface(fireballSurface);
+
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
 
+    // Create fireball objects
+    //createFireball(0, 0);
 
     bool gameRunning = true;
     SDL_Event event;
 
     while (gameRunning)
     {
-        // Handle events and user input
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
                 gameRunning = false;
 
-            // Handle key presses for movement
             if (event.type == SDL_KEYDOWN)
             {
                 switch (event.key.keysym.sym)
                 {
                     case SDLK_w:
                         for (auto& unit : dragonVector)
-                            unit.moverRect.y -= 15;  // Adjust movement speed
+                            unit.moverRect.y -= 15;  // To adjust movement speed
                         break;
 
                     case SDLK_s:
                         for (auto& unit : dragonVector)
-                            unit.moverRect.y += 15;  
+                            unit.moverRect.y += 15;
                         break;
-                    // Commented out for now, just need up and down movement
+                    // Commented out (used for Debugging), just need up and down movement
                     /* case SDLK_a:
                         for (auto& unit : dragonVector)
-                            unit.moverRect.x -= 10;  
+                            unit.moverRect.x -= 10;
                         break;
-
                     case SDLK_d:
-                        for (auto& unit : dragonVector)
+                    for (auto& unit : dragonVector)
                             unit.moverRect.x += 10;  
                         break; */
 
                     // will add more cases for other keys later such as spacebar for shooting the fireball
+                    case SDLK_SPACE:
+                        // Create a fireball in front of the dragon
+                        for (auto& fireball : fireballVector)
+                        {
+                            fireball.active = true;
+                        }
+                        //break;
+                        for (auto& unit : dragonVector)
+                        {
+                            createFireball(unit.moverRect.x + unit.moverRect.w, unit.moverRect.y + unit.moverRect.h / 2);
+                        }
+                        break;
                 }
             }
         }
 
-        // Clear the renderer
         SDL_RenderClear(window.getRenderer());
 
         // Render the background
         SDL_RenderCopy(window.getRenderer(), backgroundTexture, nullptr, nullptr);
 
         // Render the dragon
-        drawObjects(window.getRenderer(), dragonTexture);
+        drawObjects(window.getRenderer(), dragonTexture, fireballTexture);
 
-        // Present the renderer
+        // Update and move fireballs
+        updateFireballs();
+
         SDL_RenderPresent(window.getRenderer());
     }
 
-    // Clean up resources
     SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(dragonTexture);
+    SDL_DestroyTexture(fireballTexture);
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();
+
     return 0;
 }

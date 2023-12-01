@@ -1,12 +1,17 @@
+// Dragon.hpp
 #pragma once
 #include <SDL.h>
 #include <vector>
-
-void drawObjects(SDL_Renderer* gRenderer, SDL_Texture* assets);
-void createObject(int x, int y);
+#include "Fireball.hpp"
 
 struct Unit {
     SDL_Rect srcRect, moverRect;
+    int currentFrameIndex;
 };
 
-extern std::vector<Unit> dragonVector; // Declare the vector as external
+extern std::vector<Unit> dragonVector; // Declaring the vector as external
+extern int dragonAnimation;
+
+void drawUnit(SDL_Renderer* gRenderer, SDL_Texture* assets, Unit& unit);
+void drawObjects(SDL_Renderer* gRenderer, SDL_Texture* assets, SDL_Texture* fireballTexture); // Passing  fireballTexture now
+void createObject(int x, int y);
