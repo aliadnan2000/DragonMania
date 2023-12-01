@@ -4,6 +4,7 @@
 #include "RenderWindow.hpp"
 #include "Dragon.hpp"
 #include "Fireball.hpp"
+#include "Healthbar.hpp"
 
 int main(int argc, char* args[])
 {
@@ -68,11 +69,32 @@ int main(int argc, char* args[])
     SDL_Texture* fireballTexture = SDL_CreateTextureFromSurface(window.getRenderer(), fireballSurface);
     SDL_FreeSurface(fireballSurface);
 
+    // Load healthbar image
+    SDL_Surface* healthbarSurface = IMG_Load("assets.png");
+    if (!healthbarSurface) {
+        std::cout << "Failed to load healthbar image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* healthbarTexture = SDL_CreateTextureFromSurface(window.getRenderer(), healthbarSurface);
+    SDL_FreeSurface(healthbarSurface);
+
+    if (!healthbarTexture) {
+        std::cout << "Failed to create texture from assets image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
 
     // Create fireball objects
     //createFireball(0, 0);
+
+    // Create health bar object
+    initializeHealthbar();
 
     bool gameRunning = true;
     SDL_Event event;
@@ -135,12 +157,17 @@ int main(int argc, char* args[])
         // Update and move fireballs
         updateFireballs();
 
+        // Update and draw the healthbar
+        drawHealthbar(window.getRenderer(), healthbarTexture);
+
+
         SDL_RenderPresent(window.getRenderer());
     }
 
     SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(dragonTexture);
     SDL_DestroyTexture(fireballTexture);
+    SDL_DestroyTexture(healthbarTexture);
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();
