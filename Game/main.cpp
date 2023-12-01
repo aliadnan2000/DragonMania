@@ -22,7 +22,7 @@ int main(int argc, char* args[])
     RenderWindow window("Dragoon v1.0", 1280, 720);
 
     // Load background image
-     SDL_Surface* backgroundImage = IMG_Load("bg.png");
+    SDL_Surface* backgroundImage = IMG_Load("bg.png");
     if (!backgroundImage)
     {
         std::cout << "Failed to load background image. Error: " << SDL_GetError() << std::endl;
