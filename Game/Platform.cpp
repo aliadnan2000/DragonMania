@@ -11,7 +11,7 @@ void createPlatform(int x, int y, bool type) {
         speed = 10;  // Speed for the bottom platform
     } else {
         platformRect = {979, 439, 130, 388};
-        speed = 13;  // Speed for the top platform
+        speed = 10;  // Speed for the top platform
     }
 
     Platform newPlatform = {platformRect, {x, y, 130, 388}, speed, true};
