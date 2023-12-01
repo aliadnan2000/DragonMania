@@ -5,6 +5,7 @@
 #include "Dragon.hpp"
 #include "Fireball.hpp"
 #include "Healthbar.hpp"
+#include "Platform.hpp"
 
 int main(int argc, char* args[])
 {
@@ -87,6 +88,24 @@ int main(int argc, char* args[])
         return 1;
     }
 
+    // Load platform image
+    SDL_Surface* platformSurface = IMG_Load("assets.png");
+    if (!platformSurface) {
+        std::cout << "Failed to load platform image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* platformTexture = SDL_CreateTextureFromSurface(window.getRenderer(), platformSurface);
+    SDL_FreeSurface(platformSurface);
+
+    if (!platformTexture) {
+        std::cout << "Failed to create texture from assets image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
 
@@ -95,12 +114,19 @@ int main(int argc, char* args[])
 
     // Create health bar object
     initializeHealthbar();
+    
+    // Create platform objects
+    createPlatform(1280, 500, true);
 
     bool gameRunning = true;
     SDL_Event event;
+    Uint32 startTime = SDL_GetTicks();
+    bool secondPlatformCreated = false;
 
     while (gameRunning)
     {
+        Uint32 currentTime = SDL_GetTicks();
+        Uint32 elapsedTime = currentTime - startTime;
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -112,12 +138,12 @@ int main(int argc, char* args[])
                 {
                     case SDLK_w:
                         for (auto& unit : dragonVector)
-                            unit.moverRect.y -= 15;  // To adjust movement speed
+                            unit.moverRect.y -= 20;  // To adjust movement speed
                         break;
 
                     case SDLK_s:
                         for (auto& unit : dragonVector)
-                            unit.moverRect.y += 15;
+                            unit.moverRect.y += 20;
                         break;
                     // Commented out (used for Debugging), just need up and down movement
                     /* case SDLK_a:
@@ -159,6 +185,15 @@ int main(int argc, char* args[])
 
         // Update and draw the healthbar
         drawHealthbar(window.getRenderer(), healthbarTexture);
+
+        // Update and draw platforms
+        // After 4000 ms, create the top platform from the top
+        if (elapsedTime >= 4000 && !secondPlatformCreated) {
+        createPlatform(1280, 0, false); // Platform created at the top
+        secondPlatformCreated = true;  // condition is only triggered once
+        }
+        updatePlatforms();
+        drawPlatforms(window.getRenderer(), platformTexture);
 
 
         SDL_RenderPresent(window.getRenderer());
