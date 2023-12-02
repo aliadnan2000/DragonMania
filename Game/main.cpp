@@ -24,6 +24,50 @@ int main(int argc, char* args[])
 
     RenderWindow window("Dragoon v1.0", 1280, 720);
 
+    // Load intro image
+    SDL_Surface* introSurface = IMG_Load("starting screen.png");
+    if (!introSurface)
+    {
+        std::cout << "Failed to load intro image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* introTexture = SDL_CreateTextureFromSurface(window.getRenderer(), introSurface);
+    SDL_FreeSurface(introSurface);
+
+    if (!introTexture)
+    {
+        std::cout << "Failed to create texture from intro image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+
+    // Render the intro image
+    SDL_RenderCopy(window.getRenderer(), introTexture, nullptr, nullptr);
+    SDL_RenderPresent(window.getRenderer());
+
+    // Wait for a key press or mouse click to start the game
+    bool introComplete = false;
+    while (!introComplete)
+    {
+        SDL_Event introEvent;
+        while (SDL_PollEvent(&introEvent))
+        {
+            if (introEvent.type == SDL_QUIT)
+            {
+                introComplete = true;
+            }
+            else if (introEvent.type == SDL_KEYDOWN || introEvent.type == SDL_MOUSEBUTTONDOWN)
+            {
+                introComplete = true;
+            }
+        }
+    }
+
+    SDL_DestroyTexture(introTexture);
+
     // Load background image
     SDL_Surface* backgroundImage = IMG_Load("bg.png");
     if (!backgroundImage)
@@ -145,24 +189,13 @@ int main(int argc, char* args[])
                         for (auto& unit : dragonVector)
                             unit.moverRect.y += 20;
                         break;
-                    // Commented out (used for Debugging), just need up and down movement
-                    /* case SDLK_a:
-                        for (auto& unit : dragonVector)
-                            unit.moverRect.x -= 10;
-                        break;
-                    case SDLK_d:
-                    for (auto& unit : dragonVector)
-                            unit.moverRect.x += 10;  
-                        break; */
 
-                    // will add more cases for other keys later such as spacebar for shooting the fireball
                     case SDLK_SPACE:
-                        // Create a fireball in front of the dragon
                         for (auto& fireball : fireballVector)
                         {
                             fireball.active = true;
                         }
-                        //break;
+
                         for (auto& unit : dragonVector)
                         {
                             createFireball(unit.moverRect.x + unit.moverRect.w, unit.moverRect.y + unit.moverRect.h / 2);
@@ -181,23 +214,20 @@ int main(int argc, char* args[])
         drawObjects(window.getRenderer(), dragonTexture, fireballTexture);
 
         // Update and move fireballs
-        updateFireballs();    
+        updateFireballs();
         checkDragonPlatformCollision();
 
         // Update and draw the healthbar
         drawHealthbar(window.getRenderer(), healthbarTexture);
-        
-
 
         // Update and draw platforms
-        // After 4000 ms, create the top platform from the top
-        if (elapsedTime >= 4000 && !secondPlatformCreated) {
-        createPlatform(1280, 0, false); // Platform created at the top
-        secondPlatformCreated = true;  // condition is only triggered once
+        if (elapsedTime >= 4000 && !secondPlatformCreated)
+        {
+            createPlatform(1280, 0, false);
+            secondPlatformCreated = true;
         }
         updatePlatforms();
         drawPlatforms(window.getRenderer(), platformTexture);
-
 
         SDL_RenderPresent(window.getRenderer());
     }
@@ -206,6 +236,7 @@ int main(int argc, char* args[])
     SDL_DestroyTexture(dragonTexture);
     SDL_DestroyTexture(fireballTexture);
     SDL_DestroyTexture(healthbarTexture);
+    SDL_DestroyTexture(platformTexture);
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();

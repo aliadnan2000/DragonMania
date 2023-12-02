@@ -10,5 +10,5 @@ extern Healthbar healthbar;
 
 void drawHealthbar(SDL_Renderer* gRenderer, SDL_Texture* assets);
 void initializeHealthbar();
-inline void updateHealthbar(int damage);
+void updateHealthbar(int damage);
 

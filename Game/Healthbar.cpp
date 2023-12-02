@@ -12,7 +12,7 @@ void initializeHealthbar() {
     healthbar.moverRect.y = 15;
 }
 
-inline void updateHealthbar(int damage) {
+void updateHealthbar(int damage) {
     healthbar.currentHealth -= damage;
     if (healthbar.currentHealth < 0) {
         healthbar.currentHealth = 0;

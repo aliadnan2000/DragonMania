@@ -61,7 +61,7 @@ void checkDragonPlatformCollision() {
         for (auto& dragon : dragonVector) {
             if (checkCollision(dragon.moverRect, platform.moverRect)) {
                 respawnDragon();
-                updateHealthbar(20);  // Decrease health by 20%
+                updateHealthbar(-20);  // Decrease health by 20%
             }
         }
     }
@@ -73,9 +73,3 @@ void respawnDragon() {
     dragonVector[0].moverRect.y = lastDragonPosition.y;
 }
 
-void updateHealthbar(int damage) {
-    healthbar.currentHealth -= damage;
-    if (healthbar.currentHealth < 0) {
-        healthbar.currentHealth = 0;
-    }
-}
