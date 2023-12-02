@@ -181,10 +181,13 @@ int main(int argc, char* args[])
         drawObjects(window.getRenderer(), dragonTexture, fireballTexture);
 
         // Update and move fireballs
-        updateFireballs();
+        updateFireballs();    
+        checkDragonPlatformCollision();
 
         // Update and draw the healthbar
         drawHealthbar(window.getRenderer(), healthbarTexture);
+        
+
 
         // Update and draw platforms
         // After 4000 ms, create the top platform from the top
