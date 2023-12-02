@@ -217,9 +217,6 @@ int main(int argc, char* args[])
         updateFireballs();
         checkDragonPlatformCollision();
 
-        // Update and draw the healthbar
-        drawHealthbar(window.getRenderer(), healthbarTexture);
-
         // Update and draw platforms
         if (elapsedTime >= 4000 && !secondPlatformCreated)
         {
@@ -228,6 +225,9 @@ int main(int argc, char* args[])
         }
         updatePlatforms();
         drawPlatforms(window.getRenderer(), platformTexture);
+
+        // Update and draw the healthbar
+        drawHealthbar(window.getRenderer(), healthbarTexture);
 
         SDL_RenderPresent(window.getRenderer());
     }
