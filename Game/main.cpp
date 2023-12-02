@@ -6,6 +6,7 @@
 #include "Fireball.hpp"
 #include "Healthbar.hpp"
 #include "Platform.hpp"
+#include "Heart.hpp"
 
 int main(int argc, char* args[])
 {
@@ -22,7 +23,7 @@ int main(int argc, char* args[])
         return 1;
     }
 
-    RenderWindow window("Dragoon v1.0", 1280, 720);
+    RenderWindow window("Dragon v1.0", 1280, 720);
 
     // Load intro image
     SDL_Surface* introSurface = IMG_Load("starting screen.png");
@@ -101,6 +102,30 @@ int main(int argc, char* args[])
     }
     SDL_Texture* dragonTexture = SDL_CreateTextureFromSurface(window.getRenderer(), dragonSurface);
     SDL_FreeSurface(dragonSurface);
+
+//Load heart image
+
+SDL_Surface* heartSurface = IMG_Load("assets.png");
+if (!heartSurface)
+{
+    std::cout << "Failed to load heart image. Error: " << SDL_GetError() << std::endl;
+    IMG_Quit();
+    SDL_Quit();
+    return 1;
+}
+
+SDL_Texture* heartTexture = SDL_CreateTextureFromSurface(window.getRenderer(), heartSurface);
+SDL_FreeSurface(heartSurface);
+
+if (!heartTexture)
+{
+    std::cout << "Failed to create texture from heart image. Error: " << SDL_GetError() << std::endl;
+    IMG_Quit();
+    SDL_Quit();
+    return 1;
+} 
+
+
 
     // Load fireball image
     SDL_Surface* fireballSurface = IMG_Load("assets.png");
@@ -205,38 +230,51 @@ int main(int argc, char* args[])
             }
         }
 
-        SDL_RenderClear(window.getRenderer());
+       SDL_RenderClear(window.getRenderer());
 
-        // Render the background
-        SDL_RenderCopy(window.getRenderer(), backgroundTexture, nullptr, nullptr);
+    // Render the background
+    SDL_RenderCopy(window.getRenderer(), backgroundTexture, nullptr, nullptr);
 
-        // Render the dragon
-        drawObjects(window.getRenderer(), dragonTexture, fireballTexture);
+    // Render the dragon
+    drawObjects(window.getRenderer(), dragonTexture, fireballTexture);
 
-        // Update and move fireballs
-        updateFireballs();
-        checkDragonPlatformCollision();
+    // Update and move fireballs and collision detection
+    updateFireballs();
+    checkDragonPlatformCollision();
 
-        // Update and draw platforms
-        if (elapsedTime >= 4000 && !secondPlatformCreated)
-        {
-            createPlatform(1280, 0, false);
-            secondPlatformCreated = true;
-        }
-        updatePlatforms();
-        drawPlatforms(window.getRenderer(), platformTexture);
+    // Update and draw the healthbar
+    drawHealthbar(window.getRenderer(), healthbarTexture);
 
-        // Update and draw the healthbar
-        drawHealthbar(window.getRenderer(), healthbarTexture);
+    drawHeart(window.getRenderer(), heartTexture);
 
-        SDL_RenderPresent(window.getRenderer());
+    // Update and draw platforms
+    if (elapsedTime >= 4000 && !secondPlatformCreated)
+    {
+        createPlatform(1280, 0, false);
+        secondPlatformCreated = true;
     }
+    updatePlatforms();
+    drawPlatforms(window.getRenderer(), platformTexture);
+
+    // Render the remaining heart count
+    createHeart(10,50);
+    //remove hearts from the screen once collision occurs
+    SDL_Rect heartRect = {10, 50, 30, 30}; 
+    for (int i = 0; i < remainingHearts; ++i)
+{
+    SDL_RenderCopy(window.getRenderer(), heartTexture, &heartVector[0].srcRect, &heartRect);
+    heartRect.x += 40; 
+}
+    
+    SDL_RenderPresent(window.getRenderer());
+}
 
     SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(dragonTexture);
     SDL_DestroyTexture(fireballTexture);
     SDL_DestroyTexture(healthbarTexture);
     SDL_DestroyTexture(platformTexture);
+    SDL_DestroyTexture(heartTexture);
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();

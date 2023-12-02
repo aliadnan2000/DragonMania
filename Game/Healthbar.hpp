@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL.h>
 
+
 struct Healthbar {
     SDL_Rect srcRect, moverRect;
     int currentHealth;

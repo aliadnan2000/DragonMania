@@ -6,9 +6,16 @@ using namespace std;
 std::vector<Unit> dragonVector;
 int dragonAnimation = 0;
 SDL_Point lastDragonPosition = {0, 0};
+int remainingHearts = 3;
 
 
 const int ANIMATION_DELAY_MS = 100; // Delay set in milliseconds
+
+// function to decrement hearts and print the remaining hearts
+void decrementHearts() {
+    remainingHearts = std::max(0, remainingHearts - 1);
+    std::cout<<"Remaining Hearts: "<<remainingHearts<<std::endl;
+}
 
 void createObject(int x, int y) {
     Unit newDragon = { {31, 27, 113, 89}, {x, y, 90, 50}, 0 }; // Initial frame index is 0
@@ -49,6 +56,7 @@ void drawObjects(SDL_Renderer* gRenderer, SDL_Texture* assets, SDL_Texture* fire
     }
 }
 
+//function to check collision
 bool checkCollision(const SDL_Rect& rectA, const SDL_Rect& rectB) {
     return (rectA.x < rectB.x + rectB.w &&
             rectA.x + rectA.w > rectB.x &&
@@ -56,17 +64,36 @@ bool checkCollision(const SDL_Rect& rectA, const SDL_Rect& rectB) {
             rectA.y + rectA.h > rectB.y);
 }
 
+//function to check collision between platform and fireball
+void destroyPlatform(int index) {
+    if (index >= 0 && index < platformVector.size()) {
+        platformVector[index].active = false;
+    }
+}
+
+//function to check collision between dragon and platform and respawn dragon and decrement hearts
 void checkDragonPlatformCollision() {
-    for (const auto& platform : platformVector) {
+    for (size_t i = 0; i < platformVector.size(); ++i) {
         for (auto& dragon : dragonVector) {
-            if (checkCollision(dragon.moverRect, platform.moverRect)) {
+            if (checkCollision(dragon.moverRect, platformVector[i].moverRect)) {
                 respawnDragon();
-                updateHealthbar(-20);  // Decrease health by 20%
+                decrementHearts();
+
+            }
+        }
+    }
+
+    for (size_t i = 0; i < fireballVector.size(); ++i) {
+        for (size_t j = 0; j < platformVector.size(); ++j) {
+            if (fireballVector[i].active && checkCollision(fireballVector[i].moverRect, platformVector[j].moverRect)) {
+                fireballVector[i].active = false; // Deactivate the fireball
+                destroyPlatform(j);
             }
         }
     }
 }
 
+//function to respawn dragon
 void respawnDragon() {
     lastDragonPosition = {10, 360 - 25};  // Center of the screen minus half the dragon size
     dragonVector[0].moverRect.x = lastDragonPosition.x;
