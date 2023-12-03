@@ -10,6 +10,8 @@
 #include "Boss.hpp"
 #include "AntiFireball.hpp"
 #include <unordered_set>
+#include <thread>
+#include <chrono>
 
 int main(int argc, char* args[])
 {
@@ -27,6 +29,16 @@ int main(int argc, char* args[])
     }
 
     RenderWindow window("Dragon v1.0", 1280, 720);
+
+    //game over image 
+    SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("gameover.jpg"));
+    if (!gameOverTexture)
+    {
+        std::cout << "Failed to create texture from game over image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
 
     // Load intro image
     SDL_Surface* introSurface = IMG_Load("starting screen.png");
@@ -215,6 +227,7 @@ int main(int argc, char* args[])
     Uint32 bossSpawnTime = SDL_GetTicks() + 40000;  // Spawn the boss after 40 seconds
     createBoss();
     
+    bool isGameOver = false;
     bool gameRunning = true;
     SDL_Event event;
     
@@ -325,11 +338,26 @@ int main(int argc, char* args[])
     //remove hearts from the screen once collision occurs
     SDL_Rect heartRect = {10, 50, 30, 30}; 
     for (int i = 0; i < remainingHearts; ++i)
-{
-    SDL_RenderCopy(window.getRenderer(), heartTexture, &heartVector[0].srcRect, &heartRect);
-    heartRect.x += 40; 
-}
+    {
+        SDL_RenderCopy(window.getRenderer(), heartTexture, &heartVector[0].srcRect, &heartRect);
+        heartRect.x += 40; 
+    }
     
+    if (remainingHearts <= 1)
+    {
+        isGameOver = true;
+
+        // Render the game over image
+        SDL_RenderCopy(window.getRenderer(), gameOverTexture, nullptr, nullptr);
+        SDL_RenderPresent(window.getRenderer());
+
+        // Wait for 5 seconds
+        std::this_thread::sleep_for(std::chrono::seconds(10));
+
+        // Exit the game loop
+        gameRunning = false;
+    }
+
     SDL_RenderPresent(window.getRenderer());
 }
 
@@ -340,6 +368,7 @@ int main(int argc, char* args[])
     SDL_DestroyTexture(platformTexture);
     SDL_DestroyTexture(heartTexture);
     SDL_DestroyTexture(bossTexture);
+    SDL_DestroyTexture(gameOverTexture);
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();
