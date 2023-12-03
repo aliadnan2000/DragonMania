@@ -80,27 +80,33 @@ void destroyFireball(int index) {
 
 //function to check collision between dragon and platform and respawn dragon and decrement hearts
 void checkDragonPlatformCollision() {
-    for (size_t i = 0; i < platformVector.size(); ++i) {
-        for (auto& dragon : dragonVector) {
-            if (checkCollision(dragon.moverRect, platformVector[i].moverRect)&& platformVector[i].active) {
+    // Check collision between dragon and platform
+    for (auto& dragon : dragonVector) {
+        for (size_t i = 0; i < platformVector.size(); ++i) {
+            if (platformVector[i].active && checkCollision(dragon.moverRect, platformVector[i].moverRect)) {
                 respawnDragon();
                 decrementHearts();
                 destroyPlatform(i);
-
             }
         }
     }
 
+    // Check collision between fireball and platform
     for (size_t i = 0; i < fireballVector.size(); ++i) {
-        for (size_t j = 0; j < platformVector.size(); ++j) {
-            if (fireballVector[i].active && checkCollision(fireballVector[i].moverRect, platformVector[j].moverRect)&& platformVector[i].active) {
-                fireballVector[i].active = false; // Deactivate the fireball
-                std::cout<<"Fireball destroyed"<<std::endl;
-                destroyFireball(i);
+        if (fireballVector[i].active) {
+            for (size_t j = 0; j < platformVector.size(); ++j) {
+                if (platformVector[j].active && checkCollision(fireballVector[i].moverRect, platformVector[j].moverRect)) {
+                    fireballVector[i].active = false;
+                    std::cout << "Fireball destroyed" << std::endl;
+                    destroyFireball(i);
+                    break;
+                }
             }
         }
     }
 }
+
+
 
 //function to respawn dragon
 void respawnDragon() {
