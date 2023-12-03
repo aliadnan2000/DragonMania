@@ -9,6 +9,7 @@
 #include "Heart.hpp"
 #include "Boss.hpp"
 #include "AntiFireball.hpp"
+#include <unordered_set>
 
 int main(int argc, char* args[])
 {
@@ -105,27 +106,27 @@ int main(int argc, char* args[])
     SDL_Texture* dragonTexture = SDL_CreateTextureFromSurface(window.getRenderer(), dragonSurface);
     SDL_FreeSurface(dragonSurface);
 
-//Load heart image
+    //Load heart image
 
-SDL_Surface* heartSurface = IMG_Load("assets.png");
-if (!heartSurface)
-{
-    std::cout << "Failed to load heart image. Error: " << SDL_GetError() << std::endl;
-    IMG_Quit();
-    SDL_Quit();
-    return 1;
-}
+    SDL_Surface* heartSurface = IMG_Load("assets.png");
+    if (!heartSurface)
+    {
+        std::cout << "Failed to load heart image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
 
-SDL_Texture* heartTexture = SDL_CreateTextureFromSurface(window.getRenderer(), heartSurface);
-SDL_FreeSurface(heartSurface);
+    SDL_Texture* heartTexture = SDL_CreateTextureFromSurface(window.getRenderer(), heartSurface);
+    SDL_FreeSurface(heartSurface);
 
-if (!heartTexture)
-{
-    std::cout << "Failed to create texture from heart image. Error: " << SDL_GetError() << std::endl;
-    IMG_Quit();
-    SDL_Quit();
-    return 1;
-} 
+    if (!heartTexture)
+    {
+        std::cout << "Failed to create texture from heart image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    } 
 
 
 
@@ -221,6 +222,7 @@ if (!heartTexture)
     bool secondPlatformCreated = false;
     // Create heart for main dragon
     createHeart(800,800);
+    std::unordered_set<SDL_Keycode> pressedKeys;
 
     while (gameRunning)
     {
@@ -230,39 +232,48 @@ if (!heartTexture)
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
-                gameRunning = false;
+            gameRunning = false;
 
-            if (event.type == SDL_KEYDOWN)
+            else if (event.type == SDL_KEYDOWN)
             {
+                pressedKeys.insert(event.key.keysym.sym);
                 switch (event.key.keysym.sym)
                 {
-                    case SDLK_w:
-                        for (auto& unit : dragonVector)
-                            unit.moverRect.y -= 20;  // To adjust movement speed
-                        break;
-
-                    case SDLK_s:
-                        for (auto& unit : dragonVector)
-                            unit.moverRect.y += 20;
-                        break;
-
                     case SDLK_SPACE:
-                        for (auto& fireball : fireballVector)
+                        for (auto &fireball : fireballVector)
                         {
-                            if (!fireball.ifdestroyed){
+                            if (!fireball.ifdestroyed)
+                            {
                                 fireball.active = true;
                             }
-
                         }
 
-                        for (auto& unit : dragonVector)
+                        for (auto &unit : dragonVector)
                         {
                             createFireball(unit.moverRect.x + unit.moverRect.w, unit.moverRect.y + unit.moverRect.h / 2);
                         }
                         break;
+                    }
+                }
+                else if (event.type == SDL_KEYUP)
+                {
+                    pressedKeys.erase(event.key.keysym.sym);
                 }
             }
+
+        // Update the dragon position based on pressed keys
+        for (auto &unit : dragonVector)
+        {
+            if (pressedKeys.find(SDLK_w) != pressedKeys.end())
+            {
+                unit.moverRect.y -= 20; // to adjust the speed of the dragon
+            }
+            if (pressedKeys.find(SDLK_s) != pressedKeys.end())
+            {
+                unit.moverRect.y += 20;
+            }
         }
+
 
        SDL_RenderClear(window.getRenderer());
 
