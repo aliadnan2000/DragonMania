@@ -191,11 +191,13 @@ if (!heartTexture)
     SDL_Event event;
     Uint32 startTime = SDL_GetTicks();
     bool secondPlatformCreated = false;
+    createHeart(800,800);
 
     while (gameRunning)
     {
         Uint32 currentTime = SDL_GetTicks();
         Uint32 elapsedTime = currentTime - startTime;
+        
         while (SDL_PollEvent(&event))
         {
             if (event.type == SDL_QUIT)
@@ -257,7 +259,6 @@ if (!heartTexture)
     drawPlatforms(window.getRenderer(), platformTexture);
 
     // Render the remaining heart count
-    createHeart(10,50);
     //remove hearts from the screen once collision occurs
     SDL_Rect heartRect = {10, 50, 30, 30}; 
     for (int i = 0; i < remainingHearts; ++i)

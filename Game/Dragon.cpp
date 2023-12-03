@@ -87,7 +87,7 @@ void checkDragonPlatformCollision() {
         for (size_t j = 0; j < platformVector.size(); ++j) {
             if (fireballVector[i].active && checkCollision(fireballVector[i].moverRect, platformVector[j].moverRect)) {
                 fireballVector[i].active = false; // Deactivate the fireball
-                destroyPlatform(j);
+                // destroyPlatform(j);
             }
         }
     }
