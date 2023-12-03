@@ -106,6 +106,18 @@ void checkDragonPlatformCollision() {
     }
 }
 
+void checkDragonAntiFireballCollision() {
+    for (auto& dragon : dragonVector) {
+        for (auto& antiFireball : antiFireballVector) {
+            if (antiFireball.active && checkCollision(dragon.moverRect, antiFireball.moverRect)) {
+                std::cout << "Dragon hit by AntiFireball! Decreasing hearts..." << std::endl;
+                respawnDragon();
+                decrementHearts();
+                antiFireball.active = false;  // Deactivate the AntiFireball after collision
+            }
+        }
+    }
+}
 
 
 //function to respawn dragon

@@ -6,6 +6,7 @@
 #include "Healthbar.hpp"
 #include "Platform.hpp"
 #include "Heart.hpp"
+#include "AntiFireball.hpp"
 
 struct Unit {
     SDL_Rect srcRect, moverRect;
@@ -22,3 +23,5 @@ void createObject(int x, int y);
 void checkDragonPlatformCollision();
 void respawnDragon();
 void decrementHearts();
+void checkDragonAntiFireballCollision();
+

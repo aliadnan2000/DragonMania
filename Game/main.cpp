@@ -210,6 +210,26 @@ int main(int argc, char* args[])
         return 1;
     }
 
+    SDL_Surface* antiFireballSurface = IMG_Load("assets.png");
+    if (!antiFireballSurface)
+    {
+        std::cout << "Failed to load boss dragon image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+
+    SDL_Texture* antiFireballTexture = SDL_CreateTextureFromSurface(window.getRenderer(), antiFireballSurface);
+    SDL_FreeSurface(antiFireballSurface);
+
+    if (!antiFireballTexture)
+    {
+        std::cout << "Failed to create texture from boss dragon image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
 
@@ -299,6 +319,7 @@ int main(int argc, char* args[])
     // Update and move fireballs and collision detection
     updateFireballs();
     checkDragonPlatformCollision();
+    checkDragonAntiFireballCollision();
 
     drawHeart(window.getRenderer(), heartTexture);
 
