@@ -249,7 +249,10 @@ if (!heartTexture)
                     case SDLK_SPACE:
                         for (auto& fireball : fireballVector)
                         {
-                            fireball.active = true;
+                            if (!fireball.ifdestroyed){
+                                fireball.active = true;
+                            }
+
                         }
 
                         for (auto& unit : dragonVector)

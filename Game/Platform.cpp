@@ -42,7 +42,7 @@ void updatePlatforms() {
         }
     }
 
-    // Check if 30 seconds have elapsed, reset the timer, and clear the platforms
+    // Check if 40 seconds have elapsed, reset the timer, and clear the platforms
     if (elapsedTime >= 40000) {
         startTime = currentTime;
         clearPlatforms();

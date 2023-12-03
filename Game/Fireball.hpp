@@ -6,6 +6,7 @@ struct Fireball {
     SDL_Rect srcRect, moverRect;
     int speed;
     bool active;
+    bool ifdestroyed;
 };
 
 extern std::vector<Fireball> fireballVector;
