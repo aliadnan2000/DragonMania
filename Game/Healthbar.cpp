@@ -18,3 +18,8 @@ void updateHealthbar(int damage) {
         healthbar.currentHealth = 0;
     }
 }
+
+void updateHealthbarTexture(const SDL_Rect& newTextureRect) {
+    // Update the health bar texture
+    healthbar.srcRect = newTextureRect;
+}

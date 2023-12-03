@@ -2,9 +2,15 @@
 #include <SDL.h>
 #include <vector>
 
-struct Heart {
+class Heart {
+private:
+    bool active;
+
+public:
     SDL_Rect srcRect, moverRect;
-    bool active;  
+    Heart(int x, int y);
+    void draw(SDL_Renderer* gRenderer, SDL_Texture* assets) const;
+    bool isActive() const;
 };
 
 extern std::vector<Heart> heartVector;

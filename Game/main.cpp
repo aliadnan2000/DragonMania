@@ -244,7 +244,7 @@ int main(int argc, char* args[])
 
     // Create boss dragon
     bool bossSpawned = false;
-    Uint32 bossSpawnTime = SDL_GetTicks() + 4000;  // Spawn the boss after 40 seconds
+    Uint32 bossSpawnTime = SDL_GetTicks() + 40000;  // Spawn the boss after 40 seconds
     createBoss();
     
     bool isGameOver = false;
@@ -350,6 +350,25 @@ int main(int argc, char* args[])
         // Update and draw anti-fireballs
         updateAntiFireballs();
         drawAntiFireballs(window.getRenderer(), fireballTexture);
+        // Check if the boss is defeated
+        if (isBossDefeated() == 0) {
+            // Render the "You Win" image
+            SDL_Texture* winTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("you_win.png"));
+            SDL_RenderCopy(window.getRenderer(), winTexture, nullptr, nullptr);
+            SDL_RenderPresent(window.getRenderer());
+
+            // Wait for 5 seconds
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+
+            // Exit the game loop
+            gameRunning = false;
+    } else if (!bossSpawned && currentTime >= bossSpawnTime) {
+        // Spawn the boss after 40 seconds
+        bossVector[0].active = true;
+        bossSpawned = true;
+    }
+
+        
     } else if (!bossSpawned && currentTime >= bossSpawnTime) {
         // Spawn the boss after 40 seconds
         bossVector[0].active = true;
@@ -365,7 +384,7 @@ int main(int argc, char* args[])
         heartRect.x += 40; 
     }
     
-    if (remainingHearts <= 1)
+    if (remainingHearts <= 0)
     {
         isGameOver = true;
 

@@ -11,8 +11,12 @@ struct Boss {
 };
 
 extern std::vector<Boss> bossVector;
+extern int bossHealth;
 
 void createBoss();
 void updateBoss();
 void drawBoss(SDL_Renderer* gRenderer, SDL_Texture* assets);
+void damageBoss();
+bool isBossDefeated();
+void updateBossHealth();
 

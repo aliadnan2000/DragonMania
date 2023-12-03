@@ -3,10 +3,17 @@
 #include <ctime>
 #include <iostream>
 #include "AntiFireball.hpp"
+#include "Healthbar.hpp"
+#include "Fireball.hpp"
 
 std::vector<Boss> bossVector;
 
 //const int BOSS_ANIMATION_DELAY_MS = 90; // Delay set in milliseconds
+int bossHealth = 3;
+
+bool isBossDefeated() {
+    return bossHealth;
+}
 
 void updateBossAnimation(Boss& boss) {
     // Dragon animation based on the object's position in the vector
@@ -40,6 +47,22 @@ void createBoss() {
     bossVector.push_back(newBoss);
 }
 
+//function to check collision
+bool check_ourCollision(const SDL_Rect& rectA, const SDL_Rect& rectB) {
+    return (rectA.x < rectB.x + rectB.w &&
+            rectA.x + rectA.w > rectB.x &&
+            rectA.y < rectB.y + rectB.h &&
+            rectA.y + rectA.h > rectB.y);
+}
+
+
+void destroy_ourFireball(int index) {
+    if (index >= 0 && index < fireballVector.size()) {
+        fireballVector[index].active = false;
+        fireballVector[index].ifdestroyed = true;
+    }
+}
+
 void updateBoss() {
     for (auto& boss : bossVector) {
         if (boss.active) {
@@ -53,6 +76,19 @@ void updateBoss() {
             if (rand() % 100 < 5) {  // 5% chance to shoot a fireball
                 //function to create a fireball for the boss
                 createAntiFireball(boss.moverRect.x, boss.moverRect.y + boss.moverRect.h / 2);
+            }
+            // Check collision with fireballs
+            for (size_t i = 0; i < fireballVector.size(); ++i) {
+                if (fireballVector[i].active){
+                    for (size_t j = 0; j < bossVector.size(); ++j){
+                        if (bossVector[j].active && check_ourCollision(fireballVector[i].moverRect, bossVector[j].moverRect)){
+                            fireballVector[i].active = false;
+                            destroy_ourFireball(i);
+                            updateBossHealth();
+                            break;
+                        }
+                    }
+                }
             }
 
             // Update boss animation counter
@@ -68,5 +104,19 @@ void drawBoss(SDL_Renderer* gRenderer, SDL_Texture* assets) {
         if (boss.active) {
             SDL_RenderCopy(gRenderer, assets, &boss.srcRect, &boss.moverRect);
         }
+    }
+}
+
+void updateBossHealth() {
+    // Reduce boss health and update the health bar
+    bossHealth--;
+
+    // Update health bar based on bossHealth value
+    if (bossHealth == 2) {
+        updateHealthbarTexture({886, 263, 486, 27});
+    } else if (bossHealth == 1) {
+        updateHealthbarTexture({886, 191, 486, 27});
+    } else if (bossHealth == 0) {
+        updateHealthbarTexture({886, 115, 485, 27});
     }
 }
