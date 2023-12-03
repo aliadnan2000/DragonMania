@@ -7,6 +7,8 @@
 #include "Healthbar.hpp"
 #include "Platform.hpp"
 #include "Heart.hpp"
+#include "Boss.hpp"
+#include "AntiFireball.hpp"
 
 int main(int argc, char* args[])
 {
@@ -175,6 +177,26 @@ if (!heartTexture)
         return 1;
     }
 
+    // Load boss dragon image
+    SDL_Surface* bossSurface = IMG_Load("assets.png");
+    if (!bossSurface)
+    {
+        std::cout << "Failed to load boss dragon image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+    SDL_Texture* bossTexture = SDL_CreateTextureFromSurface(window.getRenderer(), bossSurface);
+    SDL_FreeSurface(bossSurface);
+
+    if (!bossTexture)
+    {
+        std::cout << "Failed to create texture from boss dragon image. Error: " << SDL_GetError() << std::endl;
+        IMG_Quit();
+        SDL_Quit();
+        return 1;
+    }
+
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
 
@@ -187,10 +209,17 @@ if (!heartTexture)
     // Create platform objects
     createPlatform(1280, 500, true);
 
+    // Create boss dragon
+    bool bossSpawned = false;
+    Uint32 bossSpawnTime = SDL_GetTicks() + 40000;  // Spawn the boss after 40 seconds
+    createBoss();
+    
     bool gameRunning = true;
     SDL_Event event;
+    
     Uint32 startTime = SDL_GetTicks();
     bool secondPlatformCreated = false;
+    // Create heart for main dragon
     createHeart(800,800);
 
     while (gameRunning)
@@ -244,9 +273,6 @@ if (!heartTexture)
     updateFireballs();
     checkDragonPlatformCollision();
 
-    // Update and draw the healthbar
-    drawHealthbar(window.getRenderer(), healthbarTexture);
-
     drawHeart(window.getRenderer(), heartTexture);
 
     // Update and draw platforms
@@ -257,6 +283,29 @@ if (!heartTexture)
     }
     updatePlatforms();
     drawPlatforms(window.getRenderer(), platformTexture);
+
+    // Update and draw the healthbar
+    drawHealthbar(window.getRenderer(), healthbarTexture);
+
+    // Check if its time to spawn the boss
+    if (currentTime >= bossSpawnTime && !bossSpawned) {
+        bossVector[0].active = true;
+        bossSpawned = true;
+    }
+
+    // Update and draw the boss if active
+    if (bossVector[0].active) {
+        updateBoss();
+        drawBoss(window.getRenderer(), dragonTexture);
+
+        // Update and draw anti-fireballs
+        updateAntiFireballs();
+        drawAntiFireballs(window.getRenderer(), fireballTexture);
+    } else if (!bossSpawned && currentTime >= bossSpawnTime) {
+        // Spawn the boss after 40 seconds
+        bossVector[0].active = true;
+        bossSpawned = true;
+    }
 
     // Render the remaining heart count
     //remove hearts from the screen once collision occurs
@@ -276,6 +325,7 @@ if (!heartTexture)
     SDL_DestroyTexture(healthbarTexture);
     SDL_DestroyTexture(platformTexture);
     SDL_DestroyTexture(heartTexture);
+    SDL_DestroyTexture(bossTexture);
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();

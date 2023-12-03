@@ -9,7 +9,7 @@ SDL_Point lastDragonPosition = {0, 0};
 int remainingHearts = 3;
 
 
-const int ANIMATION_DELAY_MS = 100; // Delay set in milliseconds
+const int ANIMATION_DELAY_MS = 85; // Delay set in milliseconds
 
 // function to decrement hearts and print the remaining hearts
 void decrementHearts() {
