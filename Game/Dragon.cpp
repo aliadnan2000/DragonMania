@@ -91,6 +91,9 @@ void checkDragonPlatformCollision() {
                 respawnDragon(); // Respawn the dragon
                 decrementHearts(); // Decrement the hearts
                 destroyPlatform(i); // Destroy the platform
+                createPlatform(1280, 0 - rand() % 150, false);
+                createPlatform(1280, 500 + rand() % 151, false);
+                break;
             }
         }
     }
