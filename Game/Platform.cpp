@@ -2,11 +2,11 @@
 #include <cstdlib>
 #include <ctime>
 
-std::vector<Platform> platformVector;
+std::vector<Platform> platformVector; // Vector to hold all the platforms
 
 void createPlatform(int x, int y, bool type) {
     SDL_Rect platformRect;
-    int speed;
+    int speed; // intialized speed of the platform
 
     if (type) {
         platformRect = {1142, 473, 130, 355};
@@ -22,8 +22,8 @@ void createPlatform(int x, int y, bool type) {
 
 void updatePlatforms() {
     static Uint32 startTime = SDL_GetTicks();  // Static to keep track of the start time
-    Uint32 currentTime = SDL_GetTicks();
-    Uint32 elapsedTime = currentTime - startTime;
+    Uint32 currentTime = SDL_GetTicks(); // Get the current time
+    Uint32 elapsedTime = currentTime - startTime; // Calculate the elapsed time
 
     for (auto& platform : platformVector) {
         if (platform.active) {
@@ -37,7 +37,7 @@ void updatePlatforms() {
                 bool isTopPlatform = rand() % 2 == 0;
                 int newY = isTopPlatform ? 0 : 500;  // Adjust the y-coordinate as needed
 
-                createPlatform(1280, newY, isTopPlatform);
+                createPlatform(1280, newY, isTopPlatform); // Create the new platform
             }
         }
     }
@@ -49,7 +49,7 @@ void updatePlatforms() {
     }
 }
 
-void drawPlatforms(SDL_Renderer* gRenderer, SDL_Texture* assets) {
+void drawPlatforms(SDL_Renderer* gRenderer, SDL_Texture* assets) { // draw platforms
     for (const auto& platform : platformVector) {
         if (platform.active) {
             SDL_RenderCopy(gRenderer, assets, &platform.srcRect, &platform.moverRect);
@@ -57,6 +57,6 @@ void drawPlatforms(SDL_Renderer* gRenderer, SDL_Texture* assets) {
     }
 }
 
-void clearPlatforms() {
+void clearPlatforms() { // clear platforms when player contacts with platform
     platformVector.clear();
 }
