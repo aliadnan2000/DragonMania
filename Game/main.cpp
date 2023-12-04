@@ -198,8 +198,6 @@ int main(int argc, char* args[])
         return 1;
     } 
 
-
-
     // Load fireball image
     SDL_Surface* fireballSurface = IMG_Load("Assets/assets.png");
     if (!fireballSurface)
@@ -291,9 +289,6 @@ int main(int argc, char* args[])
 
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
-
-    // Create fireball objects
-    //createFireball(0, 0);
 
     // Create health bar object
     initializeHealthbar();
