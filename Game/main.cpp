@@ -63,20 +63,20 @@ bool loadMedia()
 
 int main(int argc, char* args[])
 {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (SDL_Init(SDL_INIT_VIDEO) != 0) // Initialize SDL
     {
         std::cout << "SDL_Init failed. SDL_ERROR: " << SDL_GetError() << std::endl;
         return 1;
     }
 
-    if (IMG_Init(IMG_INIT_PNG) == 0)
+    if (IMG_Init(IMG_INIT_PNG) == 0) // Initialize SDL_image
     {
         std::cout << "IMG_Init failed. Error: " << SDL_GetError() << std::endl;
         SDL_Quit();
         return 1;
     }
 
-    RenderWindow window("Dragon v1.0", 1280, 720);
+    RenderWindow window("Dragoon v1.0", 1280, 720); // Create a window oof size 1280x720
 
     //game over image 
     SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("Assets/gameover.jpg"));
