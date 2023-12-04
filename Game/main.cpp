@@ -36,11 +36,11 @@ bool init()
 bool loadMedia()
 {
 	bool success = true;
-
-    	bgMusic = Mix_LoadMUS( "Haggstrom.mp3" );
-        inGameMusic = Mix_LoadMUS("journey.mp3");
-        gameOverMusic = Mix_LoadMUS("retroloss.wav");
-        gameWinMusic = Mix_LoadMUS("medievalwin.mp3");
+        // load the background music
+    	bgMusic = Mix_LoadMUS( "BGM/Haggstrom.mp3" ); 
+        inGameMusic = Mix_LoadMUS("BGM/journey.mp3");
+        gameOverMusic = Mix_LoadMUS("BGM/retroloss.wav");
+        gameWinMusic = Mix_LoadMUS("BGM/medievalwin.mp3");
 
 	if(bgMusic == NULL){
 		printf("Unable to load music: %s \n", Mix_GetError());
@@ -79,7 +79,7 @@ int main(int argc, char* args[])
     RenderWindow window("Dragon v1.0", 1280, 720);
 
     //game over image 
-    SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("gameover.jpg"));
+    SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("Assets/gameover.jpg"));
     if (!gameOverTexture)
     {
         std::cout << "Failed to create texture from game over image. Error: " << SDL_GetError() << std::endl;
@@ -89,7 +89,7 @@ int main(int argc, char* args[])
     }
 
     // Load intro image
-    SDL_Surface* introSurface = IMG_Load("starting screen.png");
+    SDL_Surface* introSurface = IMG_Load("Assets/starting screen.png");
     if (!introSurface)
     {
         std::cout << "Failed to load intro image. Error: " << SDL_GetError() << std::endl;
@@ -141,10 +141,10 @@ int main(int argc, char* args[])
 
     Mix_FreeMusic(bgMusic);
 	bgMusic = NULL;
-    SDL_DestroyTexture(introTexture);
+    SDL_DestroyTexture(introTexture); // destroy the intro texture
 
     // Load background image
-    SDL_Surface* backgroundImage = IMG_Load("bg.png");
+    SDL_Surface* backgroundImage = IMG_Load("Assets/bg.png");
     if (!backgroundImage)
     {
         std::cout << "Failed to load background image. Error: " << SDL_GetError() << std::endl;
@@ -166,7 +166,7 @@ int main(int argc, char* args[])
     }
 
     // Load dragon image
-    SDL_Surface* dragonSurface = IMG_Load("assets.png");
+    SDL_Surface* dragonSurface = IMG_Load("Assets/assets.png");
     if (!dragonSurface)
     {
         std::cout << "Failed to load dragon image. Error: " << SDL_GetError() << std::endl;
@@ -178,8 +178,7 @@ int main(int argc, char* args[])
     SDL_FreeSurface(dragonSurface);
 
     //Load heart image
-
-    SDL_Surface* heartSurface = IMG_Load("assets.png");
+    SDL_Surface* heartSurface = IMG_Load("Assets/assets.png");
     if (!heartSurface)
     {
         std::cout << "Failed to load heart image. Error: " << SDL_GetError() << std::endl;
@@ -202,7 +201,7 @@ int main(int argc, char* args[])
 
 
     // Load fireball image
-    SDL_Surface* fireballSurface = IMG_Load("assets.png");
+    SDL_Surface* fireballSurface = IMG_Load("Assets/assets.png");
     if (!fireballSurface)
     {
         std::cout << "Failed to load fireball image. Error: " << SDL_GetError() << std::endl;
@@ -214,7 +213,7 @@ int main(int argc, char* args[])
     SDL_FreeSurface(fireballSurface);
 
     // Load healthbar image
-    SDL_Surface* healthbarSurface = IMG_Load("assets.png");
+    SDL_Surface* healthbarSurface = IMG_Load("Assets/assets.png");
     if (!healthbarSurface) {
         std::cout << "Failed to load healthbar image. Error: " << SDL_GetError() << std::endl;
         IMG_Quit();
@@ -232,7 +231,7 @@ int main(int argc, char* args[])
     }
 
     // Load platform image
-    SDL_Surface* platformSurface = IMG_Load("assets.png");
+    SDL_Surface* platformSurface = IMG_Load("Assets/assets.png");
     if (!platformSurface) {
         std::cout << "Failed to load platform image. Error: " << SDL_GetError() << std::endl;
         IMG_Quit();
@@ -250,7 +249,7 @@ int main(int argc, char* args[])
     }
 
     // Load boss dragon image
-    SDL_Surface* bossSurface = IMG_Load("assets.png");
+    SDL_Surface* bossSurface = IMG_Load("Assets/assets.png");
     if (!bossSurface)
     {
         std::cout << "Failed to load boss dragon image. Error: " << SDL_GetError() << std::endl;
@@ -269,7 +268,8 @@ int main(int argc, char* args[])
         return 1;
     }
 
-    SDL_Surface* antiFireballSurface = IMG_Load("assets.png");
+    // Load anti-fireball image
+    SDL_Surface* antiFireballSurface = IMG_Load("Assets/assets.png");
     if (!antiFireballSurface)
     {
         std::cout << "Failed to load boss dragon image. Error: " << SDL_GetError() << std::endl;
@@ -306,8 +306,8 @@ int main(int argc, char* args[])
     Uint32 bossSpawnTime = SDL_GetTicks() + 40000;  // Spawn the boss after 40 seconds
     createBoss();
     
-    bool isGameOver = false;
-    bool gameRunning = true;
+    bool isGameOver = false; // to check if the game is over
+    bool gameRunning = true; // to check if the game is running
     SDL_Event event;
     
     Uint32 startTime = SDL_GetTicks();
@@ -316,7 +316,7 @@ int main(int argc, char* args[])
     createHeart(800,800);
     std::unordered_set<SDL_Keycode> pressedKeys;
 
-    Mix_PlayMusic(inGameMusic, -1);
+    Mix_PlayMusic(inGameMusic, -1); // play the ingame music and -1 to loop the music indefinitely 
 
     while (gameRunning)
     {
@@ -393,9 +393,6 @@ int main(int argc, char* args[])
     updatePlatforms();
     drawPlatforms(window.getRenderer(), platformTexture);
 
-    // Update and draw the healthbar
-    //drawHealthbar(window.getRenderer(), healthbarTexture);
-
     // Check if its time to spawn the boss
     if (currentTime >= bossSpawnTime && !bossSpawned) {
         bossVector[0].active = true;
@@ -413,12 +410,12 @@ int main(int argc, char* args[])
         drawAntiFireballs(window.getRenderer(), fireballTexture);
         // Check if the boss is defeated
         if (isBossDefeated() == 0) {
-            Mix_HaltMusic();
-            Mix_PlayMusic(gameWinMusic,1);
-            // Render the "You Win" image
-            SDL_Texture* winTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("you_win.png"));
-            SDL_RenderCopy(window.getRenderer(), winTexture, nullptr, nullptr);
-            SDL_RenderPresent(window.getRenderer());
+            Mix_HaltMusic(); // pause the ingame music
+            Mix_PlayMusic(gameWinMusic,1); // play the win music
+            // Render Win screen
+            SDL_Texture* winTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("Assets/you_win.png")); // load the win screen
+            SDL_RenderCopy(window.getRenderer(), winTexture, nullptr, nullptr); // render the win screen
+            SDL_RenderPresent(window.getRenderer()); // present the win screen
 
             // Wait for 5 seconds
             std::this_thread::sleep_for(std::chrono::seconds(8));
@@ -430,35 +427,28 @@ int main(int argc, char* args[])
         bossVector[0].active = true;
         bossSpawned = true;
     }
-
-        
-    } else if (!bossSpawned && currentTime >= bossSpawnTime) {
-        // Spawn the boss after 40 seconds
-        bossVector[0].active = true;
-        bossSpawned = true;
     }
-
     // Render the remaining heart count
     //remove hearts from the screen once collision occurs
     SDL_Rect heartRect = {10, 50, 30, 30}; 
     for (int i = 0; i < remainingHearts; ++i)
     {
-        SDL_RenderCopy(window.getRenderer(), heartTexture, &heartVector[0].srcRect, &heartRect);
+        SDL_RenderCopy(window.getRenderer(), heartTexture, &heartVector[0].srcRect, &heartRect); // render the heart
         heartRect.x += 40; 
     }
     
-    if (remainingHearts <= 0)
+    if (remainingHearts <= 0) // if the dragon has no more hearts left, game over
     {
         isGameOver = true;
 
-        // Render the game over image
-        Mix_HaltMusic();
-        Mix_PlayMusic(gameOverMusic,1);
-        SDL_RenderCopy(window.getRenderer(), gameOverTexture, nullptr, nullptr);
-        SDL_RenderPresent(window.getRenderer());
+        // Render the game over screen
+        Mix_HaltMusic(); // pause the ingame music
+        Mix_PlayMusic(gameOverMusic,1); // play the game over music
+        SDL_RenderCopy(window.getRenderer(), gameOverTexture, nullptr, nullptr); // render the game over screen
+        SDL_RenderPresent(window.getRenderer()); // present the game over screen
 
         // Wait for 5 seconds
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        std::this_thread::sleep_for(std::chrono::seconds(5)); // wait for 5 seconds then close
 
         // Exit the game loop
         gameRunning = false;
@@ -466,7 +456,7 @@ int main(int argc, char* args[])
 
     SDL_RenderPresent(window.getRenderer());
 }
-
+    // Clean up
     SDL_DestroyTexture(backgroundTexture);
     SDL_DestroyTexture(dragonTexture);
     SDL_DestroyTexture(fireballTexture);
