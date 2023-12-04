@@ -42,6 +42,7 @@ void updateBossMovement(Boss& boss) {
     boss.moverRect.y += moveAmount * moveDirection;
 }
 
+//function to create boss dragon
 void createBoss() {
     Boss newBoss = {{18, 211, 148, 76}, {1100, 360, 160, 82}, 0, true, false};
     bossVector.push_back(newBoss);
@@ -55,7 +56,7 @@ bool check_ourCollision(const SDL_Rect& rectA, const SDL_Rect& rectB) {
             rectA.y + rectA.h > rectB.y);
 }
 
-
+//function to delete fireball when it collides with boss
 void destroy_ourFireball(int index) {
     if (index >= 0 && index < fireballVector.size()) {
         fireballVector[index].active = false;
@@ -63,6 +64,7 @@ void destroy_ourFireball(int index) {
     }
 }
 
+//function to update boss to animate, move randomly and shoot fireballs also check collision with our fireballs
 void updateBoss() {
     for (auto& boss : bossVector) {
         if (boss.active) {
@@ -99,6 +101,7 @@ void updateBoss() {
     }
 }
 
+//function to draw boss dragon
 void drawBoss(SDL_Renderer* gRenderer, SDL_Texture* assets) {
     for (auto& boss : bossVector) {
         if (boss.active) {
@@ -107,6 +110,7 @@ void drawBoss(SDL_Renderer* gRenderer, SDL_Texture* assets) {
     }
 }
 
+//function to check damage on boss
 void updateBossHealth() {
     // Reduce boss health and update the health bar
     bossHealth--;

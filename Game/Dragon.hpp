@@ -14,14 +14,14 @@ struct Unit {
 };
 
 extern std::vector<Unit> dragonVector;
-extern int dragonAnimation;
-extern int remainingHearts;
+extern int dragonAnimation; // dragon animation
+extern int remainingHearts; // remaining hearts
 
-void drawUnit(SDL_Renderer* gRenderer, SDL_Texture* assets, Unit& unit);
+void drawUnit(SDL_Renderer* gRenderer, SDL_Texture* assets, Unit& unit); // draw dragon
 void drawObjects(SDL_Renderer* gRenderer, SDL_Texture* assets, SDL_Texture* fireballTexture);
-void createObject(int x, int y);
-void checkDragonPlatformCollision();
-void respawnDragon();
-void decrementHearts();
-void checkDragonAntiFireballCollision();
+void createObject(int x, int y); // create dragon
+void checkDragonPlatformCollision(); // check if dragon collides with platform
+void respawnDragon(); // respawn dragon when dragon collides with platform
+void decrementHearts(); // decrement hearts when dragon collides with fireball
+void checkDragonAntiFireballCollision(); // check if dragon collides with anti fireball
 

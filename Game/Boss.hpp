@@ -5,18 +5,17 @@
 struct Boss {
     SDL_Rect srcRect, moverRect;
     int currentFrameIndex;
-    bool movingUp;
-    bool active;
-    bool spawned;
+    bool movingUp; // if boss is moving up
+    bool active; // if boss is active
+    bool spawned; // if boss is spawned
 };
 
-extern std::vector<Boss> bossVector;
-extern int bossHealth;
+extern std::vector<Boss> bossVector; // boss vector
+extern int bossHealth; // boss health
 
-void createBoss();
-void updateBoss();
-void drawBoss(SDL_Renderer* gRenderer, SDL_Texture* assets);
-void damageBoss();
-bool isBossDefeated();
-void updateBossHealth();
+void createBoss(); // create boss dragon
+void updateBoss(); // update boss dragon
+void drawBoss(SDL_Renderer* gRenderer, SDL_Texture* assets); // draw boss dragon on screen
+bool isBossDefeated(); // if boss is defeated
+void updateBossHealth(); // update boss health bar
 

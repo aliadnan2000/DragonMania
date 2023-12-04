@@ -4,12 +4,12 @@
 using namespace std;
 
 std::vector<Unit> dragonVector;
-int dragonAnimation = 0;
-SDL_Point lastDragonPosition = {0, 0};
-int remainingHearts = 3;
+int dragonAnimation = 0; // dragon animation
+SDL_Point lastDragonPosition = {0, 0}; // Last dragon position
+int remainingHearts = 3; // 3 hearts at the start of the game
 
 
-const int ANIMATION_DELAY_MS = 85; // Delay set in milliseconds
+const int ANIMATION_DELAY_MS = 80; // Delay set in milliseconds
 
 // function to decrement hearts and print the remaining hearts
 void decrementHearts() {
@@ -17,6 +17,7 @@ void decrementHearts() {
     //std::cout<<"Remaining Hearts: "<<remainingHearts<<std::endl;
 }
 
+//function to create dragon
 void createObject(int x, int y) {
     Unit newDragon = { {31, 27, 113, 89}, {x, y, 90, 50}, 0 }; // Initial frame index is 0
     dragonVector.push_back(newDragon);
@@ -25,10 +26,12 @@ void createObject(int x, int y) {
     createFireball(x + 90, y + 20);
 }
 
+//function to draw dragon
 void drawUnit(SDL_Renderer* gRenderer, SDL_Texture* assets, Unit& unit) {
     SDL_RenderCopy(gRenderer, assets, &unit.srcRect, &unit.moverRect);
 }
 
+//function to draw dragon and fireball
 void drawObjects(SDL_Renderer* gRenderer, SDL_Texture* assets, SDL_Texture* fireballTexture) {
     for (size_t i = 0; i < dragonVector.size(); i++) {
         Unit& dragon = dragonVector[i];
@@ -47,7 +50,7 @@ void drawObjects(SDL_Renderer* gRenderer, SDL_Texture* assets, SDL_Texture* fire
     // Update the animation counter for the dragon
     dragonAnimation = (dragonAnimation + 1) % 3;
 
-    SDL_Delay(ANIMATION_DELAY_MS);
+    SDL_Delay(ANIMATION_DELAY_MS); // Delay the animation
 
     for (const auto& fireball : fireballVector) {
         if (fireball.active) {
@@ -64,13 +67,14 @@ bool checkCollision(const SDL_Rect& rectA, const SDL_Rect& rectB) {
             rectA.y + rectA.h > rectB.y);
 }
 
-//function to check collision between platform and fireball
+//function to destroy platform if collision occurs
 void destroyPlatform(int index) {
     if (index >= 0 && index < platformVector.size()) {
         platformVector[index].active = false;
     }
 }
 
+//fireball destroyer if collision occurs
 void destroyFireball(int index) {
     if (index >= 0 && index < fireballVector.size()) {
         fireballVector[index].active = false;
@@ -84,9 +88,9 @@ void checkDragonPlatformCollision() {
     for (auto& dragon : dragonVector) {
         for (size_t i = 0; i < platformVector.size(); ++i) {
             if (platformVector[i].active && checkCollision(dragon.moverRect, platformVector[i].moverRect)) {
-                respawnDragon();
-                decrementHearts();
-                destroyPlatform(i);
+                respawnDragon(); // Respawn the dragon
+                decrementHearts(); // Decrement the hearts
+                destroyPlatform(i); // Destroy the platform
             }
         }
     }
@@ -98,7 +102,7 @@ void checkDragonPlatformCollision() {
                 if (platformVector[j].active && checkCollision(fireballVector[i].moverRect, platformVector[j].moverRect)) {
                     fireballVector[i].active = false;
                     //std::cout << "Fireball destroyed" << std::endl;
-                    destroyFireball(i);
+                    destroyFireball(i); // Destroy the fireball
                     break;
                 }
             }
@@ -111,8 +115,8 @@ void checkDragonAntiFireballCollision() {
         for (auto& antiFireball : antiFireballVector) {
             if (antiFireball.active && checkCollision(dragon.moverRect, antiFireball.moverRect)) {
                 //std::cout << "Dragon hit by AntiFireball!" << std::endl;
-                respawnDragon();
-                decrementHearts();
+                respawnDragon(); // Respawn the dragon
+                decrementHearts(); // Decrement the hearts
                 antiFireball.active = false;  // Deactivate the AntiFireball after collision
             }
         }

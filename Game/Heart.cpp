@@ -10,8 +10,8 @@ Heart::Heart(int x, int y) : srcRect({660, 36, 86, 76}), moverRect({x, y, 40, 36
 
 // Function to create hearts
 void createHeart(int x, int y) {
-    Heart newHeart(x, y);
-    heartVector.push_back(newHeart);
+    Heart newHeart(x, y); // create new heart
+    heartVector.push_back(newHeart); // heart to vector
 }
 
 // Function to draw hearts

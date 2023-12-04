@@ -7,17 +7,17 @@
 RenderWindow::RenderWindow(const char* p_title, int p_w, int p_h)
 	: window(nullptr), renderer(nullptr)
 {
-	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN);
+	window = SDL_CreateWindow(p_title, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, p_w, p_h, SDL_WINDOW_SHOWN); // Create the window
 
 	if (window == nullptr)
 	{
-		std::cout << "Window failed to initialize. Error: " << SDL_GetError() << std::endl;
+		std::cout << "Window failed to initialize. Error: " << SDL_GetError() << std::endl; // Check if window was created
 	}
 
 	renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 }
 
-void RenderWindow::cleanUp()
+void RenderWindow::cleanUp() // Clean up the window and renderer
 {
 	if (renderer)
 	{
