@@ -14,7 +14,7 @@ const int ANIMATION_DELAY_MS = 85; // Delay set in milliseconds
 // function to decrement hearts and print the remaining hearts
 void decrementHearts() {
     remainingHearts = std::max(0, remainingHearts - 1);
-    std::cout<<"Remaining Hearts: "<<remainingHearts<<std::endl;
+    //std::cout<<"Remaining Hearts: "<<remainingHearts<<std::endl;
 }
 
 void createObject(int x, int y) {
@@ -97,7 +97,7 @@ void checkDragonPlatformCollision() {
             for (size_t j = 0; j < platformVector.size(); ++j) {
                 if (platformVector[j].active && checkCollision(fireballVector[i].moverRect, platformVector[j].moverRect)) {
                     fireballVector[i].active = false;
-                    std::cout << "Fireball destroyed" << std::endl;
+                    //std::cout << "Fireball destroyed" << std::endl;
                     destroyFireball(i);
                     break;
                 }
@@ -110,7 +110,7 @@ void checkDragonAntiFireballCollision() {
     for (auto& dragon : dragonVector) {
         for (auto& antiFireball : antiFireballVector) {
             if (antiFireball.active && checkCollision(dragon.moverRect, antiFireball.moverRect)) {
-                std::cout << "Dragon hit by AntiFireball!" << std::endl;
+                //std::cout << "Dragon hit by AntiFireball!" << std::endl;
                 respawnDragon();
                 decrementHearts();
                 antiFireball.active = false;  // Deactivate the AntiFireball after collision

@@ -12,6 +12,54 @@
 #include <unordered_set>
 #include <thread>
 #include <chrono>
+#include <SDL_mixer.h>
+
+Mix_Music *bgMusic = NULL;
+Mix_Music *inGameMusic = NULL;
+Mix_Music *gameOverMusic = NULL;
+Mix_Music *gameWinMusic = NULL;
+
+bool init()
+{
+	//Initialization flag
+	bool success = true;
+
+	//Initialize SDL
+    if( Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 ) < 0 )
+				{
+					printf( "SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError() );
+					success = false;
+				}
+                return success;
+}
+
+bool loadMedia()
+{
+	bool success = true;
+
+    	bgMusic = Mix_LoadMUS( "Haggstrom.mp3" );
+        inGameMusic = Mix_LoadMUS("journey.mp3");
+        gameOverMusic = Mix_LoadMUS("retroloss.wav");
+        gameWinMusic = Mix_LoadMUS("medievalwin.mp3");
+
+	if(bgMusic == NULL){
+		printf("Unable to load music: %s \n", Mix_GetError());
+		success = false;
+    }
+    if(inGameMusic == NULL){
+		printf("Unable to load music: %s \n", Mix_GetError());
+		success = false;
+    }
+    if(gameOverMusic == NULL){
+        printf("Unable to load music: %s \n", Mix_GetError());
+        success = false;
+    }
+    if(gameWinMusic == NULL){
+        printf("Unable to load music: %s \n", Mix_GetError());
+        success = false;
+    }
+	return success;
+}
 
 int main(int argc, char* args[])
 {
@@ -63,6 +111,15 @@ int main(int argc, char* args[])
     // Render the intro image
     SDL_RenderCopy(window.getRenderer(), introTexture, nullptr, nullptr);
     SDL_RenderPresent(window.getRenderer());
+    if (!init() || !loadMedia())
+    {
+        std::cout << "Failed to initialize or load media." << std::endl;
+        return 1;
+    }
+
+    // Play the background music
+    Mix_PlayMusic(bgMusic, -1);  // -1 to loop the music indefinitely
+
 
     // Wait for a key press or mouse click to start the game
     bool introComplete = false;
@@ -75,13 +132,15 @@ int main(int argc, char* args[])
             {
                 introComplete = true;
             }
-            else if (introEvent.type == SDL_KEYDOWN || introEvent.type == SDL_MOUSEBUTTONDOWN)
+            else if (/* introEvent.type == SDL_KEYDOWN ||  */introEvent.type == SDL_MOUSEBUTTONDOWN)
             {
                 introComplete = true;
             }
         }
     }
 
+    Mix_FreeMusic(bgMusic);
+	bgMusic = NULL;
     SDL_DestroyTexture(introTexture);
 
     // Load background image
@@ -257,6 +316,8 @@ int main(int argc, char* args[])
     createHeart(800,800);
     std::unordered_set<SDL_Keycode> pressedKeys;
 
+    Mix_PlayMusic(inGameMusic, -1);
+
     while (gameRunning)
     {
         Uint32 currentTime = SDL_GetTicks();
@@ -352,13 +413,15 @@ int main(int argc, char* args[])
         drawAntiFireballs(window.getRenderer(), fireballTexture);
         // Check if the boss is defeated
         if (isBossDefeated() == 0) {
+            Mix_HaltMusic();
+            Mix_PlayMusic(gameWinMusic,1);
             // Render the "You Win" image
             SDL_Texture* winTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("you_win.png"));
             SDL_RenderCopy(window.getRenderer(), winTexture, nullptr, nullptr);
             SDL_RenderPresent(window.getRenderer());
 
             // Wait for 5 seconds
-            std::this_thread::sleep_for(std::chrono::seconds(5));
+            std::this_thread::sleep_for(std::chrono::seconds(8));
 
             // Exit the game loop
             gameRunning = false;
@@ -389,6 +452,8 @@ int main(int argc, char* args[])
         isGameOver = true;
 
         // Render the game over image
+        Mix_HaltMusic();
+        Mix_PlayMusic(gameOverMusic,1);
         SDL_RenderCopy(window.getRenderer(), gameOverTexture, nullptr, nullptr);
         SDL_RenderPresent(window.getRenderer());
 
@@ -409,7 +474,11 @@ int main(int argc, char* args[])
     SDL_DestroyTexture(platformTexture);
     SDL_DestroyTexture(heartTexture);
     SDL_DestroyTexture(bossTexture);
-    SDL_DestroyTexture(gameOverTexture);
+    SDL_DestroyTexture(gameOverTexture);    
+    Mix_FreeMusic(inGameMusic);
+    Mix_FreeMusic(gameOverMusic);
+    Mix_FreeMusic(gameWinMusic);
+    Mix_Quit();
     window.cleanUp();
     IMG_Quit();
     SDL_Quit();
