@@ -37,7 +37,9 @@ void updatePlatforms() {
                 bool isTopPlatform = rand() % 2 == 0;
                 int newY = isTopPlatform ? 0 : 500;  // Adjust the y-coordinate as needed
 
-                createPlatform(1280, newY, isTopPlatform); // Create the new platform
+                //createPlatform(1280, , isTopPlatform); // Create the new platform
+                createPlatform(1280, 0 - rand() % 150, false);
+                createPlatform(1280, 500 + rand() % 151, false);
             }
         }
     }
