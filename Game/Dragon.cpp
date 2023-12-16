@@ -9,7 +9,7 @@ SDL_Point lastDragonPosition = {0, 0}; // Last dragon position
 int remainingHearts = 3; // 3 hearts at the start of the game
 
 
-const int ANIMATION_DELAY_MS = 80; // Delay set in milliseconds
+const int ANIMATION_DELAY_MS = 50; // Delay set in milliseconds
 
 // function to decrement hearts and print the remaining hearts
 void decrementHearts() {

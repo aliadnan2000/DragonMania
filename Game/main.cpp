@@ -13,6 +13,7 @@
 #include <thread>
 #include <chrono>
 #include <SDL_mixer.h>
+#include "AssetLoader.hpp"
 
 Mix_Music *bgMusic = NULL;
 Mix_Music *inGameMusic = NULL;
@@ -42,21 +43,9 @@ bool loadMedia()
         gameOverMusic = Mix_LoadMUS("BGM/retroloss.wav");
         gameWinMusic = Mix_LoadMUS("BGM/medievalwin.mp3");
 
-	if(bgMusic == NULL){
+	if(bgMusic || inGameMusic || gameOverMusic || gameWinMusic == NULL){
 		printf("Unable to load music: %s \n", Mix_GetError());
 		success = false;
-    }
-    if(inGameMusic == NULL){
-		printf("Unable to load music: %s \n", Mix_GetError());
-		success = false;
-    }
-    if(gameOverMusic == NULL){
-        printf("Unable to load music: %s \n", Mix_GetError());
-        success = false;
-    }
-    if(gameWinMusic == NULL){
-        printf("Unable to load music: %s \n", Mix_GetError());
-        success = false;
     }
 	return success;
 }
@@ -78,35 +67,10 @@ int main(int argc, char* args[])
 
     RenderWindow window("Dragoon v1.0", 1280, 720); // Create a window oof size 1280x720
 
-    //game over image 
+    //game over image
     SDL_Texture* gameOverTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("Assets/gameover.jpg"));
-    if (!gameOverTexture)
-    {
-        std::cout << "Failed to create texture from game over image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
     // Load intro image
-    SDL_Surface* introSurface = IMG_Load("Assets/starting screen.png");
-    if (!introSurface)
-    {
-        std::cout << "Failed to load intro image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-    SDL_Texture* introTexture = SDL_CreateTextureFromSurface(window.getRenderer(), introSurface);
-    SDL_FreeSurface(introSurface);
-
-    if (!introTexture)
-    {
-        std::cout << "Failed to create texture from intro image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
+    SDL_Texture* introTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("Assets/starting screen.png"));
 
     // Render the intro image
     SDL_RenderCopy(window.getRenderer(), introTexture, nullptr, nullptr);
@@ -144,171 +108,44 @@ int main(int argc, char* args[])
     SDL_DestroyTexture(introTexture); // destroy the intro texture
 
     // Load background image
-    SDL_Surface* backgroundImage = IMG_Load("Assets/bg.png");
-    if (!backgroundImage)
-    {
-        std::cout << "Failed to load background image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
-    // Convert the surface to a texture
-    SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(window.getRenderer(), backgroundImage);
-    SDL_FreeSurface(backgroundImage);
-
-    if (!backgroundTexture)
-    {
-        std::cout << "Failed to create texture from background image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
+    SDL_Texture* backgroundTexture = SDL_CreateTextureFromSurface(window.getRenderer(), IMG_Load("Assets/bg.png"));
     // Load dragon image
-    SDL_Surface* dragonSurface = IMG_Load("Assets/assets.png");
-    if (!dragonSurface)
-    {
-        std::cout << "Failed to load dragon image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-    SDL_Texture* dragonTexture = SDL_CreateTextureFromSurface(window.getRenderer(), dragonSurface);
-    SDL_FreeSurface(dragonSurface);
-
+    SDL_Texture* dragonTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
     //Load heart image
-    SDL_Surface* heartSurface = IMG_Load("Assets/assets.png");
-    if (!heartSurface)
-    {
-        std::cout << "Failed to load heart image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Texture* heartTexture = SDL_CreateTextureFromSurface(window.getRenderer(), heartSurface);
-    SDL_FreeSurface(heartSurface);
-
-    if (!heartTexture)
-    {
-        std::cout << "Failed to create texture from heart image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    } 
-
+    SDL_Texture* heartTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
     // Load fireball image
-    SDL_Surface* fireballSurface = IMG_Load("Assets/assets.png");
-    if (!fireballSurface)
-    {
-        std::cout << "Failed to load fireball image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-    SDL_Texture* fireballTexture = SDL_CreateTextureFromSurface(window.getRenderer(), fireballSurface);
-    SDL_FreeSurface(fireballSurface);
-
+    SDL_Texture* fireballTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
     // Load healthbar image
-    SDL_Surface* healthbarSurface = IMG_Load("Assets/assets.png");
-    if (!healthbarSurface) {
-        std::cout << "Failed to load healthbar image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-    SDL_Texture* healthbarTexture = SDL_CreateTextureFromSurface(window.getRenderer(), healthbarSurface);
-    SDL_FreeSurface(healthbarSurface);
-
-    if (!healthbarTexture) {
-        std::cout << "Failed to create texture from assets image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
+    SDL_Texture* healthbarTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
     // Load platform image
-    SDL_Surface* platformSurface = IMG_Load("Assets/assets.png");
-    if (!platformSurface) {
-        std::cout << "Failed to load platform image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-    SDL_Texture* platformTexture = SDL_CreateTextureFromSurface(window.getRenderer(), platformSurface);
-    SDL_FreeSurface(platformSurface);
-
-    if (!platformTexture) {
-        std::cout << "Failed to create texture from assets image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
+    SDL_Texture* platformTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
     // Load boss dragon image
-    SDL_Surface* bossSurface = IMG_Load("Assets/assets.png");
-    if (!bossSurface)
-    {
-        std::cout << "Failed to load boss dragon image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-    SDL_Texture* bossTexture = SDL_CreateTextureFromSurface(window.getRenderer(), bossSurface);
-    SDL_FreeSurface(bossSurface);
-
-    if (!bossTexture)
-    {
-        std::cout << "Failed to create texture from boss dragon image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
+    SDL_Texture* bossTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
     // Load anti-fireball image
-    SDL_Surface* antiFireballSurface = IMG_Load("Assets/assets.png");
-    if (!antiFireballSurface)
-    {
-        std::cout << "Failed to load boss dragon image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
-
-    SDL_Texture* antiFireballTexture = SDL_CreateTextureFromSurface(window.getRenderer(), antiFireballSurface);
-    SDL_FreeSurface(antiFireballSurface);
-
-    if (!antiFireballTexture)
-    {
-        std::cout << "Failed to create texture from boss dragon image. Error: " << SDL_GetError() << std::endl;
-        IMG_Quit();
-        SDL_Quit();
-        return 1;
-    }
+    SDL_Texture* antiFireballTexture = AssetLoader::LoadTexture("Assets/assets.png", window.getRenderer());
 
     // Create dragon objects
     createObject(100, 100);  // Example position (just testing for now)
-
     // Create health bar object
     initializeHealthbar();
-    
     // Create platform objects
     createPlatform(1280, 500, true);
-
     // Create boss dragon
     bool bossSpawned = false;
     Uint32 bossSpawnTime = SDL_GetTicks() + 40000;  // Spawn the boss after 40 seconds
     createBoss();
-    
+
+
     bool isGameOver = false; // to check if the game is over
     bool gameRunning = true; // to check if the game is running
     SDL_Event event;
     
     Uint32 startTime = SDL_GetTicks();
     bool secondPlatformCreated = false;
+
     // Create heart for main dragon
     createHeart(800,800);
+    
     std::unordered_set<SDL_Keycode> pressedKeys;
 
     Mix_PlayMusic(inGameMusic, -1); // play the ingame music and -1 to loop the music indefinitely 
