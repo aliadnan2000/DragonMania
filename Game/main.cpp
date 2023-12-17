@@ -43,9 +43,21 @@ bool loadMedia()
         gameOverMusic = Mix_LoadMUS("BGM/retroloss.wav");
         gameWinMusic = Mix_LoadMUS("BGM/medievalwin.mp3");
 
-	if(bgMusic || inGameMusic || gameOverMusic || gameWinMusic == NULL){
+	if(bgMusic == NULL){
 		printf("Unable to load music: %s \n", Mix_GetError());
 		success = false;
+    }
+    if(inGameMusic == NULL){
+		printf("Unable to load music: %s \n", Mix_GetError());
+		success = false;
+    }
+    if(gameOverMusic == NULL){
+        printf("Unable to load music: %s \n", Mix_GetError());
+        success = false;
+    }
+    if(gameWinMusic == NULL){
+        printf("Unable to load music: %s \n", Mix_GetError());
+        success = false;
     }
 	return success;
 }
